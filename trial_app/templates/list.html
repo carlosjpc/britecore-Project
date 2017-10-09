@@ -1,0 +1,7 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  {% for item in facts %}
+    <li> {{ item.product_id }} </li>
+  {% endfor %}
+{% endblock %}

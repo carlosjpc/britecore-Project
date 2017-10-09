@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h2>forma aqui</h2>
+  <form method="POST">
+    {{ from.csrf_token }}
+    {{ form.name.label }}
+    {{ form.name }}
+    {{ form.last_name.label }}
+    {{ form.last_name }}
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}

@@ -1,0 +1,4 @@
+Britvenv/ *
+migrations/ *
+.flake8
+.pyc

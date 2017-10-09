@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  {{ df | safe }}
+  <h3>Is this the file you just uploaded?</h3>
+  <form method=post>
+    <input type="submit" name="submit" value="yes"><input type="submit" name="submit" value="no">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  </form>
+{% endblock %}
