@@ -31,7 +31,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@analytics.route('/file_upload', methods=['GET', 'POST'])
+@analytics.route('/file_upload/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part

@@ -9,7 +9,7 @@ UPLOAD_FOLDER = '/Users/carlospceballos/proyectoBritcore/trial_app/uploads'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-                        'postgresql://postgres:andrea1990@localhost/britcore2')
+                        'postgresql://andrea1990:williamsburg@agencyperformance.cdjhfndhsudv.us-west-2.rds.amazonaws.com:5432/kaggleagencydata')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = '8216219686188755103'
 app.config['DEBUG'] = True
@@ -21,7 +21,7 @@ csrf = CSRFProtect(app)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
-engine = create_engine('postgresql://postgres:andrea1990@localhost/britcore2')
+engine = create_engine('postgresql://andrea1990:williamsburg@agencyperformance.cdjhfndhsudv.us-west-2.rds.amazonaws.com:5432/kaggleagencydata') # noqa
 
 from trial_app.insurance_data.views import analytics # noqa
 app.register_blueprint(analytics)
