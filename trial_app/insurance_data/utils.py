@@ -36,7 +36,6 @@ def fill_dim_risk_state(df):
 
 
 def fill_facts(df):
-    df = df.head(n=1000)
     df_bound_q = df[['CL_BOUND_CT_MDS', 'CL_BOUND_CT_SBZ', 'CL_BOUND_CT_eQT',
                      'PL_BOUND_CT_ELINKS', 'PL_BOUND_CT_PLRANK',
                      'PL_BOUND_CT_eQTte', 'PL_BOUND_CT_APPLIED',
@@ -92,6 +91,5 @@ def save_table_to_db(df, table_to_write_to):
     list_to_write = df.to_dict(orient='records')
     metadata = sqlalchemy.schema.MetaData(bind=engine, reflect=True)
     table = sqlalchemy.Table(table_to_write_to, metadata, autoload=True)
-    print ("ready to insert")
     conn = engine.connect()
     conn.execute(table.insert(), list_to_write)

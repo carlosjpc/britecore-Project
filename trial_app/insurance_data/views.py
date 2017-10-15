@@ -1,16 +1,14 @@
 import os
-import sqlalchemy
 import numpy as np
 
 from flask import (request, redirect, url_for, render_template, Blueprint,
-                   flash, jsonify, request)
+                   flash, jsonify)
 from pandas import read_csv, DataFrame, read_sql_table, read_sql
 from werkzeug.utils import secure_filename
 from flask_restful import Resource, reqparse
 
 from trial_app import app, engine, api
-from trial_app.insurance_data.models import (db, User, Facts, fact_schema,
-                                             facts_schema)
+from trial_app.insurance_data.models import (db, Facts, facts_schema)
 from trial_app.insurance_data.utils import (fill_dim_agency, fill_dim_date,
                                             fill_dim_product, fill_facts,
                                             fill_dim_risk_state)
@@ -105,14 +103,33 @@ def my_query(agency_id):
     return render_template('list.html', facts=facts)
 
 
-class HelloWorld(Resource):
+class FilterFactsBy(Resource):
 
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('agency_id', type=int)
+        parser.add_argument('agency_id')
         parser.add_argument('product_id')
-        parser.add_argument('date_id', type=int)
+        parser.add_argument('date_id')
         parser.add_argument('risk_id')
+        args = parser.parse_args()
+        facts = db.session.query(Facts)
+        for attr, value in args.items():
+            if value is not None:
+                facts = facts.filter(getattr(Facts, attr) == value)
+        facts = facts.all()
+        result = facts_schema.dump(facts)
+        return jsonify({"facts": result.data})
+
+
+api.add_resource(FilterFactsBy, '/filter_by/', endpoint='filter_facts')
+
+
+class Reports(Resource):
+
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('group_by', action='append')
+        parser.add_argument('calculate')
         args = parser.parse_args()
         print (args)
         facts = db.session.query(Facts)
@@ -125,4 +142,4 @@ class HelloWorld(Resource):
         return jsonify({"facts": result.data})
 
 
-api.add_resource(HelloWorld, '/hello/', endpoint='home')
+api.add_resource(Reports, '/report/', endpoint='reports')
