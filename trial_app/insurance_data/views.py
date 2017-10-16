@@ -1,9 +1,9 @@
 import os
+import pandas as pd
 import numpy as np
 
 from flask import (request, redirect, url_for, render_template, Blueprint,
-                   flash, jsonify)
-from pandas import read_csv, DataFrame, read_sql_table, read_sql
+                   flash, jsonify, send_from_directory)
 from werkzeug.utils import secure_filename
 from flask_restful import Resource, reqparse
 
@@ -14,7 +14,7 @@ from trial_app.insurance_data.utils import (fill_dim_agency, fill_dim_date,
                                             fill_dim_risk_state)
 
 ALLOWED_EXTENSIONS = set(['csv'])
-
+dims_available = {'agency': 'agencyId', 'product': 'productId'}
 analytics = Blueprint('analytics', __name__)
 
 
@@ -57,7 +57,7 @@ def save_file_to_db(filename, dim):
     if request.method == 'POST':
         if request.form['submit'] == 'yes':
             upload = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            df = read_csv(upload)
+            df = pd.read_csv(upload)
             if dim == 'agency':
                 fill_dim_agency(df)
             elif dim == 'date':
@@ -81,14 +81,14 @@ def save_file_to_db(filename, dim):
         elif request.form['submit'] == 'no':
             return redirect(url_for('.upload_file'))
     upload = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    df = read_csv(upload)
+    df = pd.read_csv(upload)
     df = df.head()
     return render_template('data_frame.html', df=df.to_html())
 
 
 @analytics.route('/api/choose_row_by_index/<int:row_number>/', methods=['GET'])
 def row(row_number):
-    df = read_sql_table('complete_table', engine)
+    df = pd.read_sql_table('facts', engine)
     if not row_number > 0 and row_number < len(df.index):
         return {"message": row_number + "Not found in this DataFrame"}
     else:
@@ -130,16 +130,41 @@ class Reports(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('group_by', action='append')
         parser.add_argument('calculate')
+        parser.add_argument('explore_dim')
         args = parser.parse_args()
         print (args)
-        facts = db.session.query(Facts)
-        for attr, value in args.items():
-            if value is not None:
-                print (attr + ' ' + str(value))
-                facts = facts.filter(getattr(Facts, attr) == value)
-        facts = facts.all()
-        result = facts_schema.dump(facts)
-        return jsonify({"facts": result.data})
+        if args['explore_dim']:
+            if dims_available.get(args['explore_dim']) not in args['group_by']:
+                return {"message": args['explore_dim'] +
+                        "must also be in the group_by list"}
+        df_facts = pd.read_sql_table('facts', engine)
+        df_facts = df_facts.groupby(args['group_by'])
+        if args['calculate']:
+            if args['calculate'] == 'sum':
+                df_facts = df_facts.sum()
+            elif args['calculate'] == 'mean':
+                df_facts = df_facts.mean()
+            elif args['calculate'] == 'size':
+                df_facts = df_facts.size()
+            elif args['calculate'] == 'describe':
+                df_facts = df_facts.describe()
+            else:
+                return {"message": args['calculate'] +
+                        "is not a valid operation"}
+        if args['explore_dim']:
+            df_facts = df_facts.reset_index()
+            if args['explore_dim'] == 'agency':
+                df_agency = pd.read_sql_table('dim_agency', engine)
+                df_facts = pd.merge(df_facts, df_agency,
+                                    left_on='agencyId', right_on='id')
+                df_facts = df_facts.drop(['id_x', 'id_y'], axis=1)
+            else:
+                return {"message": args['explore_dim'] + "is not supported"}
+        df_facts = df_facts.replace(99999, np.nan)
+        df_facts = df_facts.to_csv(os.path.join(app.config['UPLOAD_FOLDER'],
+                                   'yourCSV.csv'))
+        return send_from_directory(app.config['UPLOAD_FOLDER'],
+                                   'yourCSV.csv', as_attachment=True)
 
 
 api.add_resource(Reports, '/report/', endpoint='reports')
