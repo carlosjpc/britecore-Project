@@ -45,7 +45,7 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('.preview_file',
+            return redirect(url_for('.save_file_to_db',
                                     filename=filename))
         else:
             flash('that file extension is not allowed, please upload CVS file')
@@ -97,12 +97,6 @@ def row(row_number):
         return json
 
 
-@analytics.route('/<int:agency_id>/', methods=['GET'])
-def my_query(agency_id):
-    facts = Facts.query.filter_by(agency_id=None).all()
-    return render_template('list.html', facts=facts)
-
-
 class FilterFactsBy(Resource):
 
     def get(self):
@@ -136,7 +130,8 @@ class Reports(Resource):
         if args['explore_dim']:
             if dims_available.get(args['explore_dim']) not in args['group_by']:
                 return {"message": args['explore_dim'] +
-                        "must also be in the group_by list"}
+                        'must also be in the group_by list or its not' +
+                        'supported'}
         df_facts = pd.read_sql_table('facts', engine)
         df_facts = df_facts.groupby(args['group_by'])
         if args['calculate']:
@@ -163,8 +158,14 @@ class Reports(Resource):
         df_facts = df_facts.replace(99999, np.nan)
         df_facts = df_facts.to_csv(os.path.join(app.config['UPLOAD_FOLDER'],
                                    'yourCSV.csv'))
-        return send_from_directory(app.config['UPLOAD_FOLDER'],
-                                   'yourCSV.csv', as_attachment=True)
+        return redirect(url_for('analytics.download_csv',
+                                filename='yourCSV.csv'))
 
 
 api.add_resource(Reports, '/report/', endpoint='reports')
+
+
+@analytics.route('/download_csv/<filename>/', methods=['GET'])
+def download_csv(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               'yourCSV.csv', as_attachment=True)

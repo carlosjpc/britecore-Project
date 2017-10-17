@@ -82,7 +82,6 @@ def fill_facts(df):
              'incurredLosses', 'retentionRatio', 'lossRatio', 'lossRatio3Year',
              'growthRate3Years', 'boundQuotes', 'totalQuotes', 'agencyId',
              'dateId', 'productId', 'riskStateId']]
-    print ("made Data Frame")
     save_table_to_db(df, 'facts')
 
 
