@@ -75,7 +75,7 @@ def save_file_to_db(filename, dim):
                 fill_dim_risk_state(df)
                 fill_facts(df)
             else:
-                message = {"message": "Dimension NOT found in this DataFrame"}
+                message = {'message': 'Dimension NOT found in this DataFrame'}
                 return jsonify(message)
             return redirect(url_for('.home'))
         elif request.form['submit'] == 'no':
@@ -84,17 +84,6 @@ def save_file_to_db(filename, dim):
     df = pd.read_csv(upload)
     df = df.head()
     return render_template('data_frame.html', df=df.to_html())
-
-
-@analytics.route('/api/choose_row_by_index/<int:row_number>/', methods=['GET'])
-def row(row_number):
-    df = pd.read_sql_table('facts', engine)
-    if not row_number > 0 and row_number < len(df.index):
-        return {"message": row_number + "Not found in this DataFrame"}
-    else:
-        row = df.loc[[row_number]]
-        json = row.to_json()
-        return json
 
 
 class FilterFactsBy(Resource):
@@ -112,10 +101,10 @@ class FilterFactsBy(Resource):
                 facts = facts.filter(getattr(Facts, attr) == value)
         facts = facts.all()
         result = facts_schema.dump(facts)
-        return jsonify({"facts": result.data})
+        return jsonify({'facts': result.data})
 
 
-api.add_resource(FilterFactsBy, '/filter_by/', endpoint='filter_facts')
+api.add_resource(FilterFactsBy, '/facts/', endpoint='filter_facts')
 
 
 class Reports(Resource):
@@ -123,18 +112,19 @@ class Reports(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('group_by', action='append')
-        parser.add_argument('calculate')
-        parser.add_argument('explore_dim')
+        parser.add_argument('aggregation')
+        parser.add_argument('add_dim_attributes')
         args = parser.parse_args()
         print (args)
-        if args['explore_dim']:
-            if dims_available.get(args['explore_dim']) not in args['group_by']:
-                return {"message": args['explore_dim'] +
+        if args['add_dim_attributes']:
+            if (dims_available.get(args['add_dim_attributes'])
+               not in args['group_by']):
+                return {'message': args['add_dim_attributes'] +
                         'must also be in the group_by list or its not' +
                         'supported'}
         df_facts = pd.read_sql_table('facts', engine)
         df_facts = df_facts.groupby(args['group_by'])
-        if args['calculate']:
+        if args['aggregation']:
             if args['calculate'] == 'sum':
                 df_facts = df_facts.sum()
             elif args['calculate'] == 'mean':
@@ -144,17 +134,18 @@ class Reports(Resource):
             elif args['calculate'] == 'describe':
                 df_facts = df_facts.describe()
             else:
-                return {"message": args['calculate'] +
-                        "is not a valid operation"}
-        if args['explore_dim']:
+                return {'message': args['calculate'] +
+                        'is not a valid operation'}
+        if args['add_dim_attributes']:
             df_facts = df_facts.reset_index()
-            if args['explore_dim'] == 'agency':
+            if args['add_dim_attributes'] == 'agency':
                 df_agency = pd.read_sql_table('dim_agency', engine)
                 df_facts = pd.merge(df_facts, df_agency,
                                     left_on='agencyId', right_on='id')
                 df_facts = df_facts.drop(['id_x', 'id_y'], axis=1)
             else:
-                return {"message": args['explore_dim'] + "is not supported"}
+                return {'message': args['add_dim_attributes']
+                        + 'is not supported'}
         df_facts = df_facts.replace(99999, np.nan)
         df_facts = df_facts.to_csv(os.path.join(app.config['UPLOAD_FOLDER'],
                                    'yourCSV.csv'))
