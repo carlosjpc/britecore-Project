@@ -5,15 +5,9 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_restful import Api
 
-UPLOAD_FOLDER = '/Users/carlospceballos/proyectoBritcore/trial_app/uploads'
-DB_URI = 'postgresql://andrea1990:williamsburg@agencyperformance.cdjhfndhsudv.us-west-2.rds.amazonaws.com:5432/kaggleagencydata'
 
 app = Flask(__name__)
-# app.config.from_envvar('YOURAPPLICATION_SETTINGS')
-app.config['SQLALCHEMY_DATABASE_URI'] = (DB_URI)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SECRET_KEY'] = '8216219686188755103'
-app.config['DEBUG'] = True
 api = Api(app)
 from trial_app.insurance_data.models import db  # noqa
 migrate = Migrate(app, db)
