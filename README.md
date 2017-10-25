@@ -45,3 +45,26 @@ of the table to save to the DB. <br />
 
 It is important to note that a DB schema is not being created, but populated by
 the upload process. <br />
+
+--------------------------------------------------------------------------------- <br />
+
+To have this app running in your computer follow this steps: <br />
+
+Clone the repository git clone https://github.com/carlosjpc87/proyectoBritcore.git <br />
+
+Create a virtual Environment and install requirements.txt if your on Linux: $ pip install -r path/requirements.txt <br />
+
+Set up your a database: if your using Postgres please install psycog2: $ pip install psycopg2 <br />
+
+Configure DB connection and your .csv folder: from the app root directory go to trial_app/insurance_data/settings.config Provide a path to your UPLOAD_FOLDER: 'your_path/proyectoBritcore/trial_app/uploads' Provide DB connection: 'postgresql://user:password@localhost/db_name' <br />
+
+Navigate to /proyectoBritcore type: 5.1) python run.py db init (generates a Migrations folder, where Alembic will create the scripts to update your DB) 5.1) python run.py db migrate (generates the script from models.py to create the tables required for the app to work) 5.1) python run.py db upgrade (runs the script, you should see the tables created in your db) <br />
+
+![Alt text](https://user-images.githubusercontent.com/977013/31831687-e80965da-b589-11e7-97a9-6e0fdc179a14.jpg?raw=true)
+<br />
+
+Go to your web browser to 127.0.0.1:5000/file_upload/ and upload finalapi.csv which you can download from here: https://www.kaggle.com/moneystore/agencyperformance <br />
+
+When uploaded it will take you to a preview, click yes and the app will generate the star schema and save it to the DB. <br />
+
+the app has to endpoints accesible at: 8.1) the facts endpoint lets you query the facts table passing any of the following parameters: agency_id, date_id, risk_id and/or product_id and returns the query as JSON. (http://127.0.0.1:5000/facts/) 8.2) the report endpoint lets you create csv files where the facts table, converted to a pandas dataframe is goruped by one or more of the columns mentioned on point 8.1 and apply a pandas aggregation functions like sum() the last optional parameter allows the coupling of the resulting data frame with a dimension, to analyse the possible effects of changes in that dimension with the aggregated data in facts. <br />
