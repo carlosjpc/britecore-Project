@@ -4,7 +4,7 @@ based on this assignment: https://github.com/IntuitiveWebSolutions/DataTeamProje
 
 this api has three endpoints:
 
-  1) Facts: /facts/
+  1) Facts: '/facts/'
   Allows to filter the table facts by 'agency_id', 'product_id', 'date_id' and 'risk_id',
   this are foreign keys referencing to their respective dimension. In the facts schema,
   this four columns have a unique constraint.
@@ -12,25 +12,23 @@ this api has three endpoints:
   This endpoint returns a facts sub table, that is returned as JSON
 
 
-
-  2) Reports: /report/
+  2) Reports: '/report/'
   Creates reports taking three arguments:
-    1) pandas 'groupby', this argument can be repeated.
-    2) to produce a data frame we need the second argument: calulate, which allows to apply:
+    a) pandas 'groupby', this argument can be repeated.
+    b) to produce a data frame we need the second argument: calulate, which allows to apply:
        sum, mean, size and describe to the groupby object.
-    3) explore_dim allows to pair the resulting DataFrame with a dimension, thus making
+    c) explore_dim allows to pair the resulting DataFrame with a dimension, thus making
        possible to explore the impact of variables in the dimension table with the
        aggregated data in the DataFrame.
 
 
-
-  3) PDF Reports: /pdf_report/
+  3) PDF Reports: '/pdf_report/'
   Returns a pdf comparing the industry numbers to those of one agency.
-    1) It takes 'agency_id', 'product_id', 'date_id' and 'risk_id' and 'line_type'
+    a) It takes 'agency_id', 'product_id', 'date_id' and 'risk_id' and 'line_type'
     as parameters for comparison.
-    2) Agency_id must be provided and is the agency which will be compared to all
+    b) Agency_id must be provided and is the agency which will be compared to all
     other agencies in the DB.
-    3) at least one argument must be left blank, so that the comparison runs along
+    c) at least one argument must be left blank, so that the comparison runs along
     that dimension values.
 
   For the pdf creation to work you must install wkhtmltopdf, which can't be done
