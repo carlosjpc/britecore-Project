@@ -66,11 +66,6 @@ class Facts(db.Model):
                            'dim_product.id'), nullable=False)
 
 
-"""
-    __table_args__ = (db.UniqueConstraint('dateId', 'agencyId', 'riskStateId',
-                                          'productId', name='dims_keys'), )
-"""
-
 # ------------------ SCHEMAS ------------------
 
 

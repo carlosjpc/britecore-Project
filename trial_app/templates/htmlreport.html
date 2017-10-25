@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+<style>
+.pdf_title {font-size: 500px; text-align: center;}
+.pdf_header {font-size: 400px;}
+.pdf_p {font-size: 400px;}
+table {
+    width: 70%;
+}
+th {
+    height: 10cm;
+}
+table.dataframe, .dataframe th, .dataframe td {
+  border: none;
+  border-bottom: 1px solid #C8C8C8;
+  border-collapse: collapse;
+  text-align:left;
+  padding: 10px;
+  margin-bottom: 40px;
+  font-size: 300px;
+}
+
+.my_table th {
+    background-color: #1c4fa0;
+    color: white;
+}
+tr:nth-child(odd)		{ background-color:#eee; }
+tr:nth-child(even)	{ background-color:#fff; }
+
+tr:hover            { background-color: #ffff99;}
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class=pdf_title>Report</h2>
+
+{% for key in list_keys %}
+  <p class=pdf_header>{{ key }}</p>
+  {{ df_collection[key]|safe }}
+{% endfor %}
+
+{% endblock %}
