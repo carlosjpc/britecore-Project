@@ -48,7 +48,7 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('.save_file_to_db',
-                                    filename=filename))
+                                    filename=filename, dim='all'))
         else:
             flash('that file extension is not allowed, please upload CVS file')
     return render_template('upload.html')
