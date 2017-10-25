@@ -39,7 +39,7 @@ this api has three endpoints: <br />
 
 
 for ease of use route /file_upload/ allows the uploading a file .csv to the DB,
-the route /save_file_to_db/<filename>/<dim>/ gives a preview of the file uploaded [GET]
+the route /save_file_to_db/ <filename> / <dim> / gives a preview of the file uploaded [GET]
 and if confirmed saves the file to the DB. The dim variable allows to select which dimension
 of the table to save to the DB. <br />
 
