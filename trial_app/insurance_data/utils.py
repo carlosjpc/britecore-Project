@@ -95,4 +95,3 @@ def save_table_to_db(df, table_to_write_to):
         list_to_write = df_chunck.to_dict(orient='records')
         table = sqlalchemy.Table(table_to_write_to, metadata, autoload=True)
         conn.execute(table.insert(), list_to_write)
-        print(str(y))
