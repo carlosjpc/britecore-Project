@@ -1,8 +1,6 @@
 import sqlalchemy
 import pandas as pd
 
-from pandas import DataFrame
-
 from trial_app import engine
 
 
@@ -86,9 +84,15 @@ def fill_facts(df):
 
 
 def save_table_to_db(df, table_to_write_to):
-    df = df.drop_duplicates()
-    list_to_write = df.to_dict(orient='records')
     metadata = sqlalchemy.schema.MetaData(bind=engine, reflect=True)
-    table = sqlalchemy.Table(table_to_write_to, metadata, autoload=True)
     conn = engine.connect()
-    conn.execute(table.insert(), list_to_write)
+    df = df.drop_duplicates()
+    for x in range(0, len(df), 5000):
+        y = x + 5000
+        if y > len(df):
+            y = len(df)
+        df_chunck = df.iloc[x:y]
+        list_to_write = df_chunck.to_dict(orient='records')
+        table = sqlalchemy.Table(table_to_write_to, metadata, autoload=True)
+        conn.execute(table.insert(), list_to_write)
+        print(str(y))

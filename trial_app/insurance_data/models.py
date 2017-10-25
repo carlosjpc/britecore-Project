@@ -37,6 +37,7 @@ class DimRiskState(db.Model):
 
 
 class Facts(db.Model):
+    __table_args__ = {'schema': 'schema_facts'}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     retention_policy_quantity = db.Column(
                                 'retentionPolicyQuantity', db.String)
@@ -63,6 +64,7 @@ class Facts(db.Model):
                         db.ForeignKey('dim_risk_state.id'), nullable=False)
     product_id = db.Column('productId', db.String, db.ForeignKey(
                            'dim_product.id'), nullable=False)
+
 
 # ------------------ SCHEMAS ------------------
 
