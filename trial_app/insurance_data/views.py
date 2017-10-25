@@ -132,7 +132,7 @@ class AgencyPerformance(Resource):
             df = df[df.line == args['line_type']]
         df = df.replace([99999, '99999', 99999.0, '99999.00000'], 0)
         # from the trimmed DF select the rows of the selected agency
-        df_agency = df[df.agencyId == 'agency_id']
+        df_agency = df[df.agencyId == args['agency_id']]
         dataframe_collection = {}
         list_of_dim_keys = []
         if not dfs_to_make:
