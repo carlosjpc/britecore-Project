@@ -11,6 +11,8 @@ this api has three endpoints:
 
   This endpoint returns a facts sub table, that is returned as JSON
 
+
+
   2) Reports: /report/
   Creates reports taking three arguments:
     1) pandas 'groupby', this argument can be repeated.
@@ -19,6 +21,8 @@ this api has three endpoints:
     3) explore_dim allows to pair the resulting DataFrame with a dimension, thus making
        possible to explore the impact of variables in the dimension table with the
        aggregated data in the DataFrame.
+
+
 
   3) PDF Reports: /pdf_report/
   Returns a pdf comparing the industry numbers to those of one agency.
@@ -33,6 +37,7 @@ this api has three endpoints:
   with pip, you must download and install https://wkhtmltopdf.org/downloads.html,
   if your using MacOs that's it, if Windows please adjust line 20 in views.py to
   point to your wkhtmltopdf.exe file.
+
 
 
 for ease of use route /file_upload/ allows the uploading a file .csv to the DB,
