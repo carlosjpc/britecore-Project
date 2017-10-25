@@ -7,6 +7,7 @@ from flask_restful import Api
 
 
 app = Flask(__name__)
+app.config.from_envvar('YOURAPPLICATION_SETTINGS')
 app.config['SECRET_KEY'] = '8216219686188755103'
 api = Api(app)
 from trial_app.insurance_data.models import db  # noqa
