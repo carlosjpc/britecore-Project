@@ -3,8 +3,6 @@ import argparse
 from sqlalchemy import create_engine
 import pandas as pd
 
-engine = create_engine('postgresql://postgres:andrea1990@localhost/britcore1')
-
 
 def main(filename):
     df = pd.read_csv(filename)
@@ -18,5 +16,7 @@ def main(filename):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file')
+    parser.add_argument('--db_connection')
     args = parser.parse_args()
+    engine = create_engine(args.db_connection)
     main(args.file)
