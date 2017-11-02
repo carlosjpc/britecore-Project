@@ -169,8 +169,7 @@ class AgencyPerformance(Resource):
                     dataframe_collection[id] = self.append_df_to_dic(
                                                     df_industry, df_agency_i)
                     list_of_dim_keys.append(id)
-            return self.make_response_pdf(dataframe_collection,
-                                          list_of_dim_keys)
+        return self.make_response_pdf(dataframe_collection, list_of_dim_keys)
 
     def make_response_pdf(self, dataframe_collection, list_of_dim_keys):
         rendered = render_template('htmlreport.html',

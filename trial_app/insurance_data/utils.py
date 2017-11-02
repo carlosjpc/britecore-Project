@@ -1,5 +1,5 @@
 import sqlalchemy
-import pandas as pd
+import pandas as pd # noqa
 
 from trial_app import engine
 
